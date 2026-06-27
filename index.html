@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heritage Signal OS | Complaint Intelligence Operating System for Museums &amp; Heritage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+:root{
+  --navy:#0E2A47;--navy-mid:#163C61;--navy-deep:#071726;--navy-card:#1B4368;
+  --teal:#D4AF37;--teal-dim:#B8941F;--teal-glow:rgba(212,175,55,0.18);
+  --amber:#8C2331;--amber-dim:#6E1B26;
+  --green:#3F7D58;
+  --nav-bg:#0E2A47;--footer-bg:#071726;
+  --bg-white:#FBF8F1;--bg-light:#F4ECD9;--bg-section:#ECE0C5;
+  --card-border:rgba(212,175,55,0.22);
+  --text-dark:#16263A;--text-mid:#3C4F63;--text-muted:#5C6E80;--text-light:#8A97A4;--white:#FFFFFF;
+  --nav-h:72px;--max-w:1200px;
+  --font:'Plus Jakarta Sans',sans-serif;--display:'Sora',sans-serif;--mono:'IBM Plex Mono',monospace;
+  --ease:cubic-bezier(0.4,0,0.2,1);--ease-out:cubic-bezier(0,0,0.2,1);
+}
+body{font-family:var(--font);color:var(--text-dark);background:var(--bg-white);overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg-light);}::-webkit-scrollbar-thumb{background:var(--teal-dim);border-radius:2px;}
+img{display:block;max-width:100%;}
+
+/* NAV */
+.navbar{position:fixed;top:0;left:0;width:100%;height:var(--nav-h);background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid rgba(212,175,55,0.25);z-index:1000;display:flex;align-items:center;padding:0 clamp(16px,5vw,60px);justify-content:space-between;box-shadow:0 2px 24px rgba(0,0,0,0.5);}
+.nav-logo{font-family:var(--display);font-size:17px;font-weight:800;color:var(--white);display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none;flex-shrink:0;}
+.nav-logo-icon{width:40px;height:40px;background:rgba(212,175,55,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 14px rgba(212,175,55,0.3);border:1px solid rgba(212,175,55,0.4);}
+.nav-logo-icon i{color:#D4AF37;font-size:18px;}
+.nav-logo-text{display:flex;flex-direction:column;line-height:1;}
+.nav-logo-text span{font-size:10px;font-family:var(--mono);font-weight:500;color:rgba(212,175,55,0.85);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.nav-links{display:flex;align-items:center;gap:4px;list-style:none;}
+.nav-links li button{background:none;border:none;color:rgba(255,255,255,0.85);font-size:11px;font-weight:600;padding:8px 13px;border-radius:7px;transition:all .22s var(--ease);cursor:pointer;font-family:var(--mono);letter-spacing:.8px;text-transform:uppercase;position:relative;white-space:nowrap;}
+.nav-links li button:hover{color:#fff;background:rgba(212,175,55,0.12);}
+.nav-links li button.active{color:#D4AF37;background:rgba(212,175,55,0.1);}
+.nav-links li button.active::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:14px;height:2px;background:var(--teal);border-radius:2px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-demo-nav{background:linear-gradient(135deg,var(--teal),var(--amber));color:#fff;border:none;padding:9px 20px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;transition:all .22s;font-family:var(--mono);letter-spacing:.8px;text-transform:uppercase;white-space:nowrap;box-shadow:0 2px 10px rgba(212,175,55,0.4);}
+.btn-demo-nav:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,175,55,0.6);}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:none;flex-shrink:0;}
+.hamburger span{width:22px;height:2px;background:#D4AF37;border-radius:2px;transition:.3s;display:block;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-nav{display:none;position:fixed;top:var(--nav-h);left:0;width:100%;background:var(--navy-deep);padding:12px 20px 20px;flex-direction:column;gap:2px;z-index:999;border-bottom:1px solid rgba(212,175,55,0.2);animation:slideDown .25s var(--ease-out);}
+@keyframes slideDown{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}
+.mobile-nav.open{display:flex;}
+.mobile-nav button{background:none;border:none;color:rgba(255,255,255,.8);font-size:13px;font-weight:600;padding:13px 12px;border-bottom:1px solid rgba(212,175,55,.12);cursor:pointer;font-family:var(--mono);text-align:left;text-transform:uppercase;letter-spacing:1px;transition:color .2s,background .2s;border-radius:6px;}
+.mobile-nav button:hover{color:#D4AF37;background:rgba(212,175,55,.08);}
+.mobile-nav .mob-cta{margin-top:8px;background:linear-gradient(135deg,var(--teal),var(--amber));color:#fff;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-family:var(--mono);}
+
+/* PAGES */
+.page{display:none;min-height:100vh;padding-top:var(--nav-h);}
+.page.active{display:block;animation:pgIn .35s var(--ease);}
+@keyframes pgIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* UTILITY */
+.label-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--amber-dim);margin-bottom:14px;}
+.label-tag::before{content:'';width:20px;height:1px;background:var(--amber);}
+.label-tag-w{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:rgba(212,175,55,.95);margin-bottom:14px;}
+.label-tag-w::before{content:'';width:20px;height:1px;background:rgba(212,175,55,.7);}
+.section-h2{font-family:var(--display);font-size:clamp(26px,3.5vw,50px);font-weight:800;line-height:1.1;letter-spacing:-.8px;margin-bottom:10px;}
+.h2-dark{color:var(--text-dark);}
+.h2-white{color:#fff;}
+.divider{width:56px;height:3px;margin:16px 0 28px;border-radius:2px;}
+.div-teal{background:linear-gradient(90deg,var(--teal),transparent);}
+.div-white{background:linear-gradient(90deg,rgba(212,175,55,.85),transparent);}
+.para-d{color:var(--text-mid);line-height:1.85;font-size:16px;}
+.para-w{color:rgba(255,255,255,.85);line-height:1.85;font-size:16px;}
+.container{max-width:var(--max-w);margin:0 auto;padding:0 clamp(16px,4vw,60px);}
+.btn-p{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--teal-dim),var(--navy-mid));color:#fff;padding:13px 28px;border-radius:8px;font-weight:700;font-size:12px;letter-spacing:.8px;text-transform:uppercase;transition:all .25s;font-family:var(--mono);border:none;cursor:pointer;box-shadow:0 4px 16px rgba(184,148,31,.4);}
+.btn-p:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(212,175,55,.5);}
+.btn-s{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--teal);color:var(--navy);padding:12px 28px;border-radius:8px;font-weight:700;font-size:12px;letter-spacing:.8px;text-transform:uppercase;transition:all .25s;font-family:var(--mono);background:none;cursor:pointer;}
+.btn-s:hover{background:rgba(212,175,55,.1);}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;font-family:var(--mono);}
+.badge-c{background:rgba(212,175,55,.1);color:var(--teal-dim);border:1px solid rgba(212,175,55,.3);}
+.badge-g{background:rgba(140,35,49,.1);color:var(--amber-dim);border:1px solid rgba(140,35,49,.3);}
+.bdot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* HERO */
+.hero{background:linear-gradient(140deg,#F4ECD9 0%,#ECE0C5 40%,#E2D2A8 100%);padding:clamp(60px,10vw,100px) 0 clamp(50px,8vw,80px);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.16) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(140,35,49,.08) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{max-width:var(--max-w);margin:0 auto;padding:0 clamp(16px,4vw,60px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);align-items:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,.16);border:1px solid rgba(212,175,55,.45);border-radius:30px;padding:6px 16px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--navy);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:22px;}
+.hero-bdot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+h1{font-family:var(--display);font-size:clamp(32px,5vw,60px);font-weight:800;line-height:1.06;letter-spacing:-1.5px;color:var(--text-dark);margin-bottom:6px;}
+h1 .teal{color:var(--teal-dim);}
+.hero-rule{width:48px;height:3px;background:linear-gradient(90deg,var(--teal),var(--amber));border-radius:2px;margin:20px 0;}
+.hero-body{font-size:16px;color:var(--text-mid);line-height:1.8;margin-bottom:28px;max-width:540px;}
+.hero-btns{display:flex;gap:14px;flex-wrap:wrap;}
+
+/* DASHBOARD CARD */
+.dash-card{background:#fff;border-radius:18px;border:1px solid rgba(212,175,55,.35);padding:24px;box-shadow:0 8px 40px rgba(14,42,71,.16);}
+.dash-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;}
+.dash-lbl{font-family:var(--mono);font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;}
+.dash-title{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text-dark);}
+.live-wrap{display:flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;font-weight:700;color:var(--teal-dim);letter-spacing:1.5px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 1.5s infinite;}
+.score-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(14,42,71,.07);}
+.s-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;font-weight:700;flex-shrink:0;}
+.si-c{background:rgba(212,175,55,.16);color:var(--teal-dim);}
+.si-g{background:rgba(140,35,49,.12);color:var(--amber-dim);}
+.si-e{background:rgba(14,42,71,.1);color:var(--navy);}
+.score-lbl{flex:1;font-size:12px;color:var(--text-muted);}
+.score-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text-dark);}
+.score-big{display:flex;align-items:center;gap:16px;margin-top:18px;padding:16px;background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(140,35,49,.06));border-radius:12px;border:1px solid rgba(212,175,55,.25);}
+.sb-num{font-family:var(--display);font-size:46px;font-weight:800;color:var(--teal-dim);line-height:1;}
+.sb-info .lbl{font-size:13px;font-weight:700;color:var(--text-dark);}
+.sb-info .sub{font-size:11px;color:var(--text-muted);margin-top:3px;font-family:var(--mono);}
+
+/* DARK SECTION */
+.sec-dark{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);padding:clamp(60px,8vw,96px) 0;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px;}
+.stat-card{background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);border-radius:16px;padding:clamp(20px,3vw,30px);text-align:center;transition:transform .25s,border-color .25s;}
+.stat-card:hover{transform:translateY(-4px);border-color:rgba(212,175,55,.55);}
+.stat-num{font-family:var(--display);font-size:clamp(30px,4vw,46px);font-weight:800;color:#D4AF37;margin-bottom:10px;}
+.stat-lbl{font-size:13px;color:rgba(255,255,255,.75);line-height:1.6;}
+
+/* PLATFORM CARDS */
+.sec-light{background:var(--bg-white);padding:clamp(60px,8vw,96px) 0;}
+.sec-alt{background:var(--bg-light);padding:clamp(60px,8vw,96px) 0;}
+.plat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+.plat-card{background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;overflow:hidden;transition:border-color .3s,box-shadow .3s,transform .3s;box-shadow:0 2px 12px rgba(14,42,71,.06);}
+.plat-card:hover{border-color:rgba(212,175,55,.55);box-shadow:0 12px 40px rgba(212,175,55,.16);transform:translateY(-3px);}
+.plat-img{width:100%;height:170px;overflow:hidden;background:var(--navy);display:flex;align-items:flex-end;justify-content:flex-start;position:relative;}
+.plat-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;}
+.plat-img i{display:none;}
+.plat-img::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,42,71,.05) 0%,rgba(14,42,71,.15) 55%,rgba(7,23,38,.88) 100%);z-index:1;}
+.plat-img .pi-tag{position:absolute;bottom:12px;left:14px;font-family:var(--mono);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:#fff;background:rgba(212,175,55,.92);padding:4px 10px;border-radius:6px;z-index:3;font-weight:700;}
+.plat-inner{padding:22px;}
+.el-badge{display:inline-block;background:rgba(212,175,55,.14);color:var(--teal-dim);border-radius:6px;padding:3px 10px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;border:1px solid rgba(212,175,55,.3);}
+.plat-card h3{font-family:var(--display);font-size:16px;font-weight:700;color:var(--text-dark);margin-bottom:10px;line-height:1.3;}
+.plat-card p{font-size:13px;color:var(--text-muted);line-height:1.75;}
+.more-txt{display:none;font-size:13px;color:var(--text-muted);line-height:1.75;margin-top:10px;padding-top:10px;border-top:1px solid rgba(14,42,71,.08);}
+.plat-card.open .more-txt{display:block;}
+.expand-btn{margin-top:16px;background:none;border:1px solid rgba(14,42,71,.2);color:var(--teal-dim);padding:7px 18px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--mono);letter-spacing:.8px;text-transform:uppercase;transition:all .2s;}
+.expand-btn:hover{background:rgba(212,175,55,.1);border-color:var(--teal);}
+
+/* WHY CARDS */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:44px;}
+.why-card{background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:16px;padding:clamp(20px,3vw,30px);transition:border-color .25s,box-shadow .25s;}
+.why-card:hover{border-color:rgba(212,175,55,.5);box-shadow:0 8px 28px rgba(212,175,55,.14);}
+.why-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,rgba(212,175,55,.16),rgba(140,35,49,.08));display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:20px;color:var(--teal-dim);border:1px solid rgba(212,175,55,.3);}
+.why-card h4{font-family:var(--display);font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:10px;}
+.why-card p{font-size:13px;color:var(--text-muted);line-height:1.75;}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:44px;}
+.chart-card{background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;padding:24px;box-shadow:0 4px 16px rgba(14,42,71,.06);}
+.chart-card h4{font-family:var(--display);font-size:15px;font-weight:700;color:var(--text-dark);margin-bottom:4px;}
+.chart-card p{font-size:12px;color:var(--text-muted);margin-bottom:20px;font-family:var(--mono);}
+.chart-wrap{height:260px;position:relative;}
+
+/* PROCESS */
+.process-step{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,5vw,72px);align-items:center;margin-bottom:clamp(56px,8vw,96px);}
+.process-step:last-child{margin-bottom:0;}
+.step-num{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:12px;}
+.step-h3{font-family:var(--display);font-size:clamp(22px,2.5vw,30px);font-weight:800;color:var(--text-dark);margin-bottom:16px;line-height:1.2;}
+.step-p{color:var(--text-muted);font-size:15px;line-height:1.8;margin-bottom:18px;}
+.step-img{width:100%;aspect-ratio:16/10;border-radius:16px;border:1px solid rgba(212,175,55,.3);overflow:hidden;box-shadow:0 8px 32px rgba(14,42,71,.14);position:relative;}
+.step-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.step-img::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(14,42,71,.18),rgba(14,42,71,.04));}
+
+/* FAQ */
+.faq-wrap{display:flex;flex-direction:column;gap:12px;margin-top:32px;}
+.faq-item{background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:14px;overflow:hidden;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;cursor:pointer;gap:16px;}
+.faq-q h4{font-family:var(--display);font-size:15px;font-weight:600;color:var(--text-dark);}
+.faq-icon{font-size:22px;font-weight:300;color:var(--teal-dim);flex-shrink:0;transition:transform .3s;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-body{display:none;padding:0 22px 18px;font-size:14px;color:var(--text-muted);line-height:1.8;border-top:1px solid rgba(14,42,71,.07);}
+.faq-item.open .faq-body{display:block;}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:44px;}
+.price-card{background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;padding:clamp(20px,3vw,28px);position:relative;transition:border-color .25s,box-shadow .25s,transform .25s;box-shadow:0 4px 16px rgba(14,42,71,.06);}
+.price-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(212,175,55,.2);}
+.price-card.featured{border:2px solid var(--teal);box-shadow:0 8px 40px rgba(212,175,55,.28);transform:scale(1.03);}
+.price-card.featured:hover{transform:scale(1.03) translateY(-4px);}
+.feat-lbl{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--teal),var(--amber));color:#fff;padding:4px 18px;border-radius:20px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;}
+.price-tier{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:8px;}
+.price-title{font-family:var(--display);font-size:18px;font-weight:700;color:var(--text-dark);margin-bottom:10px;}
+.price-amount{font-family:var(--display);font-size:clamp(26px,4vw,38px);font-weight:800;color:var(--navy);line-height:1;}
+.price-amount span{font-size:14px;font-weight:500;color:var(--text-muted);}
+.price-desc{font-size:12.5px;color:var(--text-muted);margin:12px 0 18px;line-height:1.6;}
+.price-feat{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:24px;}
+.price-feat li{font-size:12.5px;color:var(--text-mid);display:flex;align-items:flex-start;gap:8px;}
+.price-feat li::before{content:'✓';color:var(--teal-dim);font-weight:700;flex-shrink:0;}
+
+/* CONTACT */
+.contact-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-deep) 100%);padding:clamp(60px,8vw,96px) 0;}
+.contact-wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:44px;}
+.contact-form{background:#fff;border-radius:18px;padding:clamp(24px,4vw,40px);box-shadow:0 8px 40px rgba(0,0,0,.15);}
+.form-group{margin-bottom:20px;}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--text-dark);margin-bottom:8px;font-family:var(--mono);letter-spacing:.5px;text-transform:uppercase;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 16px;border:1.5px solid rgba(14,42,71,.16);border-radius:10px;font-size:14px;font-family:var(--font);color:var(--text-dark);background:#fff;transition:border-color .2s,box-shadow .2s;outline:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(212,175,55,.14);}
+.form-group textarea{resize:vertical;min-height:120px;}
+.contact-info h3{font-family:var(--display);font-size:22px;font-weight:700;color:#fff;margin-bottom:16px;}
+.contact-info .sub{font-size:15px;color:rgba(255,255,255,.75);line-height:1.7;margin-bottom:28px;}
+.c-detail{display:flex;align-items:flex-start;gap:16px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.1);}
+.c-detail .ic{width:44px;height:44px;background:rgba(212,175,55,.16);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--teal);flex-shrink:0;font-size:18px;}
+.c-detail strong{display:block;font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;}
+.c-detail span{font-size:13px;color:rgba(255,255,255,.65);}
+
+/* COMP TABLE */
+.comp-wrap{overflow-x:auto;margin-top:32px;border-radius:14px;border:1px solid rgba(14,42,71,.1);}
+.comp-table{width:100%;border-collapse:collapse;font-size:13px;}
+.comp-table thead th{background:linear-gradient(135deg,var(--navy),var(--navy-deep));color:#fff;padding:14px 16px;font-family:var(--mono);font-size:10px;letter-spacing:.8px;text-transform:uppercase;text-align:left;white-space:nowrap;}
+.comp-table thead th.hi{background:linear-gradient(135deg,var(--teal),var(--amber));color:#fff;}
+.comp-table tbody tr:nth-child(even){background:var(--bg-light);}
+.comp-table tbody td{padding:12px 16px;color:var(--text-muted);border-bottom:1px solid rgba(14,42,71,.06);}
+.comp-table tbody td:first-child{font-weight:600;color:var(--text-dark);}
+.comp-table td.hi{background:rgba(212,175,55,.08);}
+.comp-table td.yes{color:#1F7A4D;font-weight:700;}
+.comp-table td.no{color:var(--text-light);}
+
+.about-hero{background:linear-gradient(140deg,#F4ECD9 0%,#ECE0C5 100%);padding:clamp(60px,8vw,96px) 0 clamp(40px,6vw,60px);}
+
+/* FOOTER */
+footer{background:var(--footer-bg);padding:60px 0 0;}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(212,175,55,.14);}
+.f-brand p{font-size:13px;color:rgba(255,255,255,.6);line-height:1.8;margin-top:14px;max-width:280px;}
+.f-col-title{font-family:var(--display);font-size:13px;font-weight:700;color:#fff;margin-bottom:18px;letter-spacing:.4px;}
+.f-col{display:flex;flex-direction:column;gap:11px;}
+.f-col a{font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;transition:color .2s;text-decoration:none;}
+.f-col a:hover{color:#D4AF37;}
+.footer-bar{display:flex;justify-content:space-between;align-items:center;padding:22px 0;flex-wrap:wrap;gap:10px;}
+.footer-bar p{font-size:12px;color:rgba(255,255,255,.45);}
+.footer-bar p span{color:rgba(212,175,55,.85);font-weight:600;}
+.footer-links{display:flex;gap:20px;}
+.footer-links a{font-size:12px;color:rgba(255,255,255,.45);text-decoration:none;cursor:pointer;}
+.footer-links a:hover{color:#D4AF37;}
+
+@media (max-width:900px){
+  .nav-links,.nav-right .btn-demo-nav{display:none;}
+  .hamburger{display:flex;}
+  .hero-inner{grid-template-columns:1fr;gap:32px;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:16px;}
+  .plat-grid{grid-template-columns:repeat(2,1fr);gap:18px;}
+  .why-grid{grid-template-columns:repeat(2,1fr);gap:16px;}
+  .charts-grid{grid-template-columns:1fr;gap:20px;}
+  .pricing-grid{grid-template-columns:1fr 1fr;gap:18px;}
+  .price-card.featured{transform:none;}
+  .contact-wrap{grid-template-columns:1fr;gap:32px;}
+  .process-step{grid-template-columns:1fr;gap:20px;}
+  .process-step>div[style*=order:2]{order:-1!important;}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
+  .tw{grid-template-columns:1fr!important;}
+  .container{padding:0 18px;}
+  .sec-dark,.sec-light,.sec-alt,.about-hero,.contact-hero{padding:48px 0;}
+  .hero{padding:48px 0 40px;}
+  h1{font-size:clamp(28px,7vw,40px);}
+  .section-h2{font-size:clamp(22px,5.5vw,32px);}
+  .comp-wrap{margin-left:-18px;margin-right:-18px;border-radius:0;width:calc(100% + 36px);}
+  .comp-table{font-size:12px;}
+  .comp-table thead th,.comp-table tbody td{padding:10px 12px;}
+  .chart-card{padding:16px;}
+  .chart-card h4{font-size:14px;}
+  .chart-card p{font-size:11px;margin-bottom:14px;}
+  .chart-wrap{height:220px;}
+}
+@media (max-width:480px){
+  .chart-wrap{height:200px;}
+  .chart-card{padding:14px;border-radius:14px;}
+}
+@media (max-width:600px){
+  .stats-grid,.plat-grid,.why-grid,.pricing-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr;}
+  .footer-bar{flex-direction:column;align-items:flex-start;}
+  .dash-card{padding:18px;}
+  .score-big{flex-direction:column;align-items:flex-start;gap:8px;}
+  .sb-num{font-size:36px;}
+}
+
+/* ===== 900px MOBILE-FRIENDLY BUTTONS ===== */
+@media (max-width:900px){
+  .hero-btns{flex-direction:column;align-items:stretch;gap:12px;}
+  .hero-btns .btn-p,.hero-btns .btn-s{width:100%;justify-content:center;padding:14px 22px;}
+  .btn-p{padding:14px 24px;font-size:12.5px;border-radius:10px;width:100%;justify-content:center;}
+  .btn-s{padding:13px 24px;font-size:12.5px;border-radius:10px;width:100%;justify-content:center;}
+  .price-card .btn-p,.price-card .btn-s{width:100%;}
+  .expand-btn{width:100%;text-align:center;padding:10px 18px;font-size:12px;}
+  .btn-demo-nav{width:100%;justify-content:center;padding:13px 20px;}
+  .mob-cta{width:100%;padding:15px;font-size:13px;}
+  .hamburger{padding:10px;}
+  .hamburger span{width:24px;height:2.5px;}
+  .contact-form button[type=submit]{padding:15px;font-size:13px;}
+  .faq-q{padding:16px 18px;}
+  .nav-logo-icon{width:38px;height:38px;}
+}
+@media (max-width:480px){
+  .btn-p,.btn-s,.btn-demo-nav,.mob-cta{padding:14px 18px;font-size:12px;letter-spacing:.5px;}
+  .hero-btns{gap:10px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon"><i class="fas fa-landmark"></i></div>
+    <div class="nav-logo-text">Heritage Signal OS<span>Complaints · Insight · Improvement</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><button id="nav-home" class="active" onclick="showPage('home')">Home</button></li>
+    <li><button id="nav-about" onclick="showPage('about')">About</button></li>
+    <li><button id="nav-platform" onclick="showPage('platform')">Platform</button></li>
+    <li><button id="nav-process" onclick="showPage('process')">How It Works</button></li>
+    <li><button id="nav-market" onclick="showPage('market')">Market</button></li>
+    <li><button id="nav-pricing" onclick="showPage('pricing')">Pricing</button></li>
+    <li><button id="nav-faq" onclick="showPage('faq')">FAQ</button></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-demo-nav" onclick="showPage('contact')">Request a Demo</button>
+  </div>
+  <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <button onclick="showPage('home');closeMob()">Home</button>
+  <button onclick="showPage('about');closeMob()">About</button>
+  <button onclick="showPage('platform');closeMob()">Platform</button>
+  <button onclick="showPage('process');closeMob()">How It Works</button>
+  <button onclick="showPage('market');closeMob()">Market</button>
+  <button onclick="showPage('pricing');closeMob()">Pricing</button>
+  <button onclick="showPage('faq');closeMob()">FAQ</button>
+  <button class="mob-cta" onclick="showPage('contact');closeMob()">Request a Demo</button>
+</div>
+
+<!-- ═══════════════ HOME ═══════════════ -->
+<div class="page active" id="page-home">
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><span class="hero-bdot"></span> THE COMPLAINT INTELLIGENCE OS FOR HERITAGE</div>
+      <h1>From Complaint Handling <span class="teal">to Complaint Learning.</span></h1>
+      <div class="hero-rule"></div>
+      <p class="hero-body">Heritage Signal OS is a first-of-its-kind AI complaint intelligence operating system that helps museums and heritage venues convert fragmented visitor complaints into explainable root-cause diagnosis, hidden accessibility-risk detection, operational interventions, and continuous service-improvement learning.</p>
+      <div class="hero-btns">
+        <button class="btn-p" onclick="showPage('contact')">Request a Demo <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>
+        <button class="btn-s" onclick="showPage('platform')">Explore the Platform</button>
+      </div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-top">
+        <div><div class="dash-lbl">Heritage Signal OS Dashboard</div><div class="dash-title">Venue Complaint Snapshot</div></div>
+        <div class="live-wrap"><span class="live-dot"></span> LIVE</div>
+      </div>
+      <div class="score-row"><div class="s-icon si-c"><i class="fas fa-comments"></i></div><div class="score-lbl">Complaints Processed (Yr1)</div><div class="score-val">50,000–100,000</div></div>
+      <div class="score-row"><div class="s-icon si-g"><i class="fas fa-wheelchair"></i></div><div class="score-lbl">Hidden Accessibility Risks Flagged</div><div class="score-val">High Priority</div></div>
+      <div class="score-row"><div class="s-icon si-e"><i class="fas fa-arrows-rotate"></i></div><div class="score-lbl">Target Repeat-Complaint Reduction</div><div class="score-val">20–30%</div></div>
+      <div class="score-big">
+        <div class="sb-num">£740.5K</div>
+        <div class="sb-info"><div class="lbl">Year 3 Revenue Target</div><div class="sub">↑ across ≈51 paying venues</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-dark">
+  <div class="container">
+    <div class="label-tag-w">Evidence-Based Targets</div>
+    <h2 class="section-h2 h2-white">A Closed-Loop Platform, Built to Prove Real Operational Value</h2>
+    <div class="divider div-white"></div>
+    <p class="para-w" style="max-width:760px">The MVP is designed to validate one thing first: that fragmented visitor complaints can be converted into structured, explainable operational intelligence that heritage venues can act on  not theoretical AI dashboards.</p>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">15–25%</div><div class="stat-lbl">Target average complaint reduction across Year 2 venues</div></div>
+      <div class="stat-card"><div class="stat-num">20–30%</div><div class="stat-lbl">Target repeat-complaint reduction by Year 3</div></div>
+      <div class="stat-card"><div class="stat-num">≥90%</div><div class="stat-lbl">Customer retention target as the venue base scales</div></div>
+      <div class="stat-card"><div class="stat-num">2,200+</div><div class="stat-lbl">UK museums, galleries and heritage sites forming the addressable market</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-light">
+  <div class="container">
+    <div class="label-tag">Our Core Capabilities</div>
+    <h2 class="section-h2 h2-dark">One Reasoning Loop. Every Visitor Complaint.</h2>
+    <div class="divider div-teal"></div>
+    <p class="para-d" style="max-width:760px">Heritage Signal OS connects emails, surveys, reviews, social media, ticket-desk notes and accessibility reports into one closed-loop operational layer  diagnosing root causes before they become repeat failures, not after.</p>
+    <div class="plat-grid" style="margin-top:36px">
+      <div class="plat-card">
+        <div class="plat-img"><img src="HH1.jpg" alt="museum gallery interior with visitors" loading="lazy"><span class="pi-tag">Signal Graph</span></div>
+        <div class="plat-inner"><div class="el-badge">Module 01</div><h3>Heritage Operations Signal Graph</h3><p>Connects visitor complaints to journey stages, locations, ticket types, visitor segments and operational teams.</p><div class="more-txt">Complaints about arrival delays, confusing directions and school-group congestion may look unrelated until they're mapped onto the same operational signal graph  revealing a single broken arrival process.</div><button class="expand-btn" onclick="toggleCard(this)">Learn More</button></div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-img"><img src="HH2.jpg" alt="museum visitors queueing at entrance" loading="lazy"><span class="pi-tag">Reasoning Engine</span></div>
+        <div class="plat-inner"><div class="el-badge">Module 02</div><h3>Journey-Cause Reasoning Engine</h3><p>Analyses complaint language alongside operational context  staffing, events, ticketing, exhibitions  to find true root causes.</p><div class="more-txt">Rather than labelling a complaint "queueing", the engine asks why: unclear signage, staffing shortages or membership-validation delays  and recommends the fix that addresses the actual cause.</div><button class="expand-btn" onclick="toggleCard(this)">Learn More</button></div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-img"><img src="HH3.jpg" alt="accessible entrance at a heritage site" loading="lazy"><span class="pi-tag">Access Risk</span></div>
+        <div class="plat-inner"><div class="el-badge">Module 03</div><h3>Hidden Accessibility Risk Detector</h3><p>Detects implicit accessibility and inclusion issues even when visitors never use the word "accessibility".</p><div class="more-txt">Phrases such as "couldn't find where to go" or "too crowded to access the exhibition" are flagged as potential physical, sensory or cognitive access barriers  surfacing risks that routine complaint logs miss.</div><button class="expand-btn" onclick="toggleCard(this)">Learn More</button></div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-img"><img src="HH4.jpg" alt="historic house and heritage estate" loading="lazy"><span class="pi-tag">Friction DNA</span></div>
+        <div class="plat-inner"><div class="el-badge">Module 04</div><h3>Friction DNA Profiler</h3><p>Scores every complaint pattern across emotional intensity, accessibility impact, safety, revenue and reputational risk.</p><div class="more-txt">This lets venue managers prioritise by real-world impact rather than complaint volume alone  so a low-frequency accessibility barrier gets the same attention as a high-volume queueing issue.</div><button class="expand-btn" onclick="toggleCard(this)">Learn More</button></div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-img"><img src="HH5.jpg" alt="museum staff reviewing operations" loading="lazy"><span class="pi-tag">Memory Loop</span></div>
+        <div class="plat-inner"><div class="el-badge">Module 05</div><h3>Intervention Memory Loop</h3><p>Tracks the corrective actions a venue takes and measures whether related complaints actually fall over time.</p><div class="more-txt">Successful interventions strengthen future recommendations; ineffective ones trigger the system to reassess root causes and propose alternative fixes  a continuously learning operational memory.</div><button class="expand-btn" onclick="toggleCard(this)">Learn More</button></div>
+      </div>
+      <div class="plat-card">
+        <div class="plat-img"><img src="HH6.jpg" alt="UK heritage architecture exterior" loading="lazy"><span class="pi-tag">Benchmarking</span></div>
+        <div class="plat-inner"><div class="el-badge">Module 06</div><h3>Anonymised Heritage Benchmark Layer</h3><p>Compares complaint patterns, friction trends and accessibility performance anonymously across participating venues.</p><div class="more-txt">As more institutions join, the benchmarking layer becomes a sector-wide intelligence network  giving every venue access to collective insight unavailable elsewhere, without exposing private data.</div><button class="expand-btn" onclick="toggleCard(this)">Learn More</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec-alt">
+  <div class="container">
+    <div class="label-tag">Why Heritage Signal OS</div>
+    <h2 class="section-h2 h2-dark">Built Exclusively for the UK Heritage Sector.</h2>
+    <div class="divider div-teal"></div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><i class="fas fa-bolt"></i></div><h4>Learning, Not Just Logging</h4><p>The system learns from real operational interventions and outcomes  not just static reporting after the fact.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-landmark"></i></div><h4>Heritage-Specific Ontology</h4><p>Built around timed-entry admissions, school visits, memberships, guided tours and accessibility routes  not generic CX categories.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-fingerprint"></i></div><h4>Institutional Knowledge Equity</h4><p>Complaint patterns and intervention outcomes become a permanent operational asset that survives staff turnover.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-sterling-sign"></i></div><h4>Sector-Fit Pricing</h4><p>Tiered SaaS pricing from £1,500/year gives small and medium venues the same intelligence multi-site national bodies rely on.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-diagram-project"></i></div><h4>Sits Above Existing Systems</h4><p>Ingests data from CRM, ticketing, survey and review platforms  no need to replace your existing tech stack.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-shield-heart"></i></div><h4>Accessibility &amp; Inclusion Impact</h4><p>Identifies hidden access barriers early, supporting Equality Act compliance and stronger, more inclusive visitor experiences.</p></div>
+    </div>
+  </div>
+</section>
+</div><!-- /home -->
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<div class="page" id="page-about">
+<section class="about-hero">
+  <div class="container">
+    <div class="label-tag">About Heritage Signal OS</div>
+    <h2 class="section-h2 h2-dark">Turning Visitor Voice into Operational Intelligence.</h2>
+    <div class="divider div-teal"></div>
+    <p class="para-d" style="max-width:800px">Heritage Signal OS is a UK-based SaaS company developing an AI-powered complaint intelligence and visitor experience optimisation platform for museums, heritage organisations, galleries, historic properties and cultural attractions  converting fragmented visitor feedback into actionable operational insight.</p>
+  </div>
+</section>
+<section class="sec-light">
+  <div class="container">
+    <div class="label-tag">Vision &amp; Mission</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px" class="tw">
+      <div style="background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;padding:32px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:12px">Mission</div>
+        <h3 style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--text-dark);margin-bottom:16px">Closed-Loop Learning for UK Heritage Venues</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.8">Heritage Signal OS exists to help UK museums, heritage venues and visitor attractions convert unstructured visitor complaints into explainable root-cause intelligence, prioritised operational interventions, and closed-loop learning that reduces repeat failures, mitigates accessibility risks, and improves visitor satisfaction.</p>
+      </div>
+      <div style="background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;padding:32px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:12px">Vision</div>
+        <h3 style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--text-dark);margin-bottom:16px">The Global OS for Learning From Visitor Complaints</h3>
+        <p style="color:var(--text-muted);font-size:14px;line-height:1.8">To become the global operating system for learning from visitor complaints in the cultural and heritage sector  transforming fragmented feedback into measurable service excellence, accessibility safety, and trusted public experiences.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="sec-alt">
+  <div class="container">
+    <div class="label-tag">What Drives Us</div>
+    <h2 class="section-h2 h2-dark">The Principles Behind the Platform</h2>
+    <div class="divider div-teal"></div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><i class="fas fa-magnifying-glass-chart"></i></div><h4>Evidence-Based</h4><p>Every recommendation is explainable, showing the visitor comments and operational context that support it.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-universal-access"></i></div><h4>Accessibility-First</h4><p>Inclusion risk detection is embedded in the core product, not bolted on as a compliance afterthought.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-landmark-dome"></i></div><h4>Sector Specialism</h4><p>A heritage-specific ontology built around real visitor journeys, exhibitions and accessibility routes.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-rotate"></i></div><h4>Continuous Learning</h4><p>Every implemented intervention feeds back into the system, sharpening future recommendations.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-lock"></i></div><h4>Trust &amp; Transparency</h4><p>UK GDPR-compliant architecture with explainable, auditable reasoning for every public-sector decision.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-flag"></i></div><h4>UK-Rooted, Global Ambition</h4><p>Validated in the UK heritage sector first, with a phased path to Ireland, Europe, Australia, Canada and the US.</p></div>
+    </div>
+  </div>
+</section>
+<section class="sec-light">
+  <div class="container">
+    <div class="label-tag">Founder Fit</div>
+    <h2 class="section-h2 h2-dark">Meet the Founder</h2>
+    <div class="divider div-teal"></div>
+    <div style="background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;padding:clamp(20px,3vw,36px)">
+      <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--teal-dim),var(--navy));display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:24px;font-weight:800;color:#fff;margin-bottom:16px">PM</div>
+      <h3 style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--text-dark);margin-bottom:4px">Priya Monga</h3>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:16px">Founder &amp; Managing Director · Heritage Signal OS</div>
+      <p style="font-size:14px;color:var(--text-muted);line-height:1.8;max-width:800px">Priya Monga brings more than ten years of customer engagement, complaint handling and quality-assurance experience, including a decade at Concentrix as a Quality Advisor monitoring service failures and coaching teams on complaint trends. She currently works as Customer Engagement Executive at the National Museum of the Royal Navy, giving her direct, first-hand exposure to museum operations, visitor journeys, accessibility considerations and the limitations of existing feedback-management processes. Her MSc in Project Management (University of Portsmouth) supports stakeholder management, risk identification and technology implementation as the platform scales. Technical architecture is led by CTO Oshada Eranga, a senior software engineer with five years' experience in scalable backend systems, Java/Spring Boot microservices and fintech-grade API integrations.</p>
+      
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-top:32px" class="tw">
+      <div style="background:linear-gradient(135deg,var(--navy),var(--navy-deep));border-radius:18px;padding:32px;color:#fff">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:rgba(212,175,55,.85);margin-bottom:12px">Exceptional Founder-Market Fit</div>
+        <h3 style="font-family:var(--display);font-size:19px;font-weight:700;margin-bottom:14px">Built by Someone Who Lives the Problem Daily</h3>
+        <p style="font-size:14px;color:rgba(255,255,255,.8);line-height:1.8">Priya's daily exposure to visitor complaints and feedback at a UK museum directly informed the concept behind Heritage Signal OS  identifying a gap existing CRM, survey and reputation-monitoring tools simply weren't built to fill. CTO Oshada Eranga brings deep distributed-systems and API-management expertise, ensuring the platform scales securely across many venues and data sources.</p>
+      </div>
+      <div style="background:#fff;border:1px solid rgba(14,42,71,.12);border-radius:18px;padding:32px">
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--teal-dim);margin-bottom:14px">Plan Highlights</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-mid)"><span style="color:var(--teal-dim);font-size:18px">✓</span> 5–8 design-partner venues secured during MVP validation</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-mid)"><span style="color:var(--teal-dim);font-size:18px">✓</span> ≈10 paying venues by end of Year 1, growing to ≈51 by Year 3</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-mid)"><span style="color:var(--teal-dim);font-size:18px">✓</span> Cash positive in every month of the 36-month plan</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-mid)"><span style="color:var(--teal-dim);font-size:18px">✓</span> Net profit after tax of £80,517 by Year 3 (10.9% margin)</div>
+          <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:var(--text-mid)"><span style="color:var(--teal-dim);font-size:18px">✓</span> Provisional patent filing planned within Months 3–6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /about -->
+
+<!-- ═══════════════ PLATFORM ═══════════════ -->
+<div class="page" id="page-platform">
+<section class="sec-dark">
+  <div class="container">
+    <div class="label-tag-w">The Full Platform</div>
+    <h2 class="section-h2 h2-white">The Heritage Complaint Reasoning Loop</h2>
+    <div class="divider div-white"></div>
+    <p class="para-w" style="max-width:760px">A unified, closed-loop intelligence platform that converts fragmented visitor feedback  emails, surveys, ticket-desk notes, reviews, social media and accessibility reports  into structured operational diagnosis, prioritised interventions, and measured outcomes.</p>
+  </div>
+</section>
+
+<section class="sec-alt">
+  <div class="container">
+    <div class="label-tag">Why Heritage Signal OS</div>
+    <h2 class="section-h2 h2-dark">Built for Every Type of Heritage Venue.</h2>
+    <div class="divider div-teal"></div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><i class="fas fa-landmark"></i></div><h4>National Museums</h4><p>Sector-specific intelligence for national museums and museum groups managing high visitor volumes and complex feedback channels.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-building-columns"></i></div><h4>Regional Museums</h4><p>Affordable, evidence-based operational improvement for regional and local-authority museums with limited digital infrastructure.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-chess-rook"></i></div><h4>Historic Houses &amp; Estates</h4><p>Complaint intelligence tuned to historic buildings, accessibility routes and grounds-based visitor journeys.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-hands-holding-circle"></i></div><h4>Heritage Trusts</h4><p>Governance-ready reporting for heritage trusts and conservation organisations balancing public accountability and resource constraints.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-ticket"></i></div><h4>Visitor Attractions</h4><p>Early-warning monitoring for visitor attractions and cultural venues navigating seasonal peaks and major exhibitions.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-sitemap"></i></div><h4>Multi-Site Organisations</h4><p>Cross-site benchmarking and centralised dashboards for multi-site heritage organisations and national bodies.</p></div>
+    </div>
+  </div>
+</section>
+</div><!-- /platform -->
+
+<!-- ═══════════════ PROCESS / HOW IT WORKS ═══════════════ -->
+<div class="page" id="page-process">
+<section class="sec-light" style="padding-top:clamp(60px,8vw,96px)">
+  <div class="container">
+    <div class="label-tag">How It Works</div>
+    <h2 class="section-h2 h2-dark">From Fragmented Complaints to Measured Operational Improvement</h2>
+    <div class="divider div-teal"></div>
+    <div style="margin-top:50px">
+      <div class="process-step">
+        <div>
+          <div class="step-num">Phase 01 · Year 1</div>
+          <h3 class="step-h3">Validation &amp; MVP Launch</h3>
+          <p class="step-p">CSV upload, email-export ingestion, AI-powered complaint clustering, heritage-specific taxonomy, root-cause categorisation, accessibility-risk detection, manager correction loops, intervention tracking and monthly recommendation reports  secured with 5–8 design-partner venues during Months 1–8.</p>
+          <p class="step-p">Founder-led customer discovery and a structured pilot programme convert 3–5 early venues into paying contracts, with revenue generation beginning in Month 8.</p>
+        </div>
+        <div class="step-img"><img src="HH7.jpg" alt="founding team validating the pilot programme" loading="lazy"></div>
+      </div>
+      <div class="process-step">
+        <div class="step-img" style="order:2"><img src="HH8.jpg" alt="growth analytics dashboard on laptop" loading="lazy"></div>
+        <div style="order:1">
+          <div class="step-num">Phase 02 · Year 2</div>
+          <h3 class="step-h3">Product Refinement &amp; Early Growth</h3>
+          <p class="step-p">Version 1.0 launches with basic API integrations, enhanced analytics dashboards, real-time operational monitoring and benchmarking functionality, growing the customer base from ≈10 to ≈42 organisations.</p>
+          <p class="step-p">The anonymised benchmarking network goes live, comparing complaint patterns, Visitor Friction DNA and intervention effectiveness across participating institutions.</p>
+        </div>
+      </div>
+      <div class="process-step">
+        <div>
+          <div class="step-num">Phase 03 · Year 3+</div>
+          <h3 class="step-h3">Sector Leadership &amp; Scalable Growth</h3>
+          <p class="step-p">Version 1.5–2.0 adds early-warning operational alerts, predictive intervention recommendations and enterprise-grade governance controls, reaching ≈51 paying organisations and 15–20+ active benchmark participants.</p>
+          <p class="step-p">International pilots begin in Ireland, Australia, New Zealand and Canada, with Western European localisation and US entry phased across Years 4–5+.</p>
+        </div>
+        <div class="step-img"><img src="HH9.jpg" alt="city skyline representing international expansion" loading="lazy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="sec-alt">
+  <div class="container">
+    <div class="label-tag">Three-Year Milestones</div>
+    <h2 class="section-h2 h2-dark">Built on a Realistic, Evidence-Led Roadmap</h2>
+    <div class="divider div-teal"></div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon"><i class="fas fa-arrow-trend-up"></i></div><h4>£740.5K Year 3 Revenue</h4><p>Recurring SaaS subscriptions, onboarding fees and premium add-ons across ≈51 paying venues by the end of Year 3.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-wheelchair"></i></div><h4>20–30% Repeat-Complaint Reduction</h4><p>Target reduction in repeat complaints by Year 3 through closed-loop intervention learning.</p></div>
+      <div class="why-card"><div class="why-icon"><i class="fas fa-network-wired"></i></div><h4>15–20+ Benchmark Participants</h4><p>The UK's first heritage-sector complaint intelligence network, live by the end of Year 3.</p></div>
+    </div>
+  </div>
+</section>
+</div><!-- /process -->
+
+<!-- ═══════════════ MARKET ═══════════════ -->
+<div class="page" id="page-market">
+<section class="sec-dark">
+  <div class="container">
+    <div class="label-tag-w">Market Analysis</div>
+    <h2 class="section-h2 h2-white">A £27.5M+ UK Heritage Complaint-Intelligence Opportunity</h2>
+    <div class="divider div-white"></div>
+    <p class="para-w" style="max-width:760px">The UK heritage sector contains 2,200+ museums, galleries, historic houses and visitor attractions. Heritage-related visitor spending reached £11.5bn (domestic day), £4.5bn (domestic overnight) and £12bn (international) in 2023  yet most organisations still manage feedback through fragmented spreadsheets and inboxes.</p>
+  </div>
+</section>
+<section class="sec-light">
+  <div class="container">
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h4>3-Year Revenue &amp; Customer Growth</h4>
+        <p>Annual revenue (£) vs. paying venues</p>
+        <div class="chart-wrap"><canvas id="chartGrowth"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>Year 3 Revenue Mix by Stream</h4>
+        <p>Subscriptions, add-ons and onboarding fees (£)</p>
+        <div class="chart-wrap"><canvas id="chartSector"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>Multi-Channel Complaint Data Sources</h4>
+        <p>Inputs fused into one intelligence layer</p>
+        <div class="chart-wrap"><canvas id="chartRootCause"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h4>Heritage Signal OS vs. Existing Tools</h4>
+        <p>Capability Comparison (0–5 Scale)</p>
+        <div class="chart-wrap"><canvas id="chartRadar"></canvas></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="sec-alt">
+  <div class="container">
+    <div class="label-tag">Competitor Analysis</div>
+    <h2 class="section-h2 h2-dark">Comparison Table  Existing Tools vs Heritage Signal OS</h2>
+    <div class="divider div-teal"></div>
+    <div class="comp-wrap">
+      <table class="comp-table">
+        <thead><tr><th>Capability</th><th>CRM &amp; Helpdesk (Salesforce, Zendesk)</th><th>Survey Tools (Qualtrics, SurveyMonkey)</th><th>BI / Analytics (Power BI, Tableau)</th><th class="hi">Heritage Signal OS</th></tr></thead>
+        <tbody>
+          <tr><td>Root-cause analysis</td><td class="no">✗</td><td class="no">✗</td><td class="no">User-defined only</td><td class="hi yes">✓</td></tr>
+          <tr><td>Hidden accessibility-risk detection</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="hi yes">✓</td></tr>
+          <tr><td>Cross-channel complaint fusion</td><td class="no">Limited</td><td class="no">Very limited</td><td class="no">Manual setup</td><td class="hi yes">✓</td></tr>
+          <tr><td>Intervention outcome tracking</td><td class="no">Basic ticket closure</td><td class="no">✗</td><td class="no">✗</td><td class="hi yes">✓</td></tr>
+          <tr><td>Anonymised cross-venue benchmarking</td><td class="no">✗</td><td class="no">✗</td><td class="no">Limited / manual</td><td class="hi yes">✓</td></tr>
+          <tr><td>Heritage-specific ontology</td><td class="no">✗</td><td class="no">✗</td><td class="no">✗</td><td class="hi yes">✓</td></tr>
+          <tr><td>Real-time early-warning alerts</td><td class="no">Limited</td><td class="no">✗</td><td class="no">Depends on setup</td><td class="hi yes">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+</div><!-- /market -->
+
+<!-- ═══════════════ PRICING ═══════════════ -->
+<div class="page" id="page-pricing">
+<section class="sec-dark">
+  <div class="container">
+    <div class="label-tag-w">Pricing</div>
+    <h2 class="section-h2 h2-white">SaaS Tiers That Scale With Your Venue</h2>
+    <div class="divider div-white"></div>
+    <p class="para-w" style="max-width:760px">Annual SaaS subscriptions, priced by visitor volume, number of sites and operational complexity  plus a one-off onboarding fee and optional premium intelligence modules.</p>
+  </div>
+</section>
+<section class="sec-light">
+  <div class="container">
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-tier">Single-Site Venue</div>
+        <div class="price-title">Starter</div>
+        <div class="price-amount">£250<span>/mo</span></div>
+        <p class="price-desc">Core complaint intelligence for small heritage venues  CSV upload, clustering and monthly insight reports.</p>
+        <ul class="price-feat">
+          <li>CSV &amp; email complaint ingestion</li>
+          <li>Heritage-specific taxonomy</li>
+          <li>Root-cause categorisation</li>
+          <li>Monthly recommendation reports</li>
+        </ul>
+        <button class="btn-s" style="width:100%;justify-content:center" onclick="showPage('contact')">Get Started</button>
+      </div>
+      <div class="price-card featured">
+        <div class="feat-lbl">Most Popular</div>
+        <div class="price-tier">Mid-Size Museum</div>
+        <div class="price-title">Professional</div>
+        <div class="price-amount">£750<span>/mo</span></div>
+        <p class="price-desc">Multi-channel ingestion, root-cause reasoning, accessibility-risk detection and intervention tracking.</p>
+        <ul class="price-feat">
+          <li>Everything in Starter</li>
+          <li>Hidden Accessibility Risk Detector</li>
+          <li>Friction DNA Profiler</li>
+          <li>Intervention Memory Loop</li>
+        </ul>
+        <button class="btn-p" style="width:100%;justify-content:center" onclick="showPage('contact')">Get Started</button>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">Multi-Site Organisation</div>
+        <div class="price-title">Group</div>
+        <div class="price-amount">£1,850<span>/mo</span></div>
+        <p class="price-desc">Cross-site benchmarking, centralised dashboards, role-based access and enhanced reporting.</p>
+        <ul class="price-feat">
+          <li>Everything in Professional</li>
+          <li>Cross-site benchmarking</li>
+          <li>Centralised dashboards</li>
+          <li>Role-based access control</li>
+        </ul>
+        <button class="btn-s" style="width:100%;justify-content:center" onclick="showPage('contact')">Get Started</button>
+      </div>
+      <div class="price-card">
+        <div class="price-tier">National Body</div>
+        <div class="price-title">Enterprise</div>
+        <div class="price-amount">£3,750<span>+/mo</span></div>
+        <p class="price-desc">Full API integrations, governance controls, custom taxonomies and board-level reporting.</p>
+        <ul class="price-feat">
+          <li>Everything in Group</li>
+          <li>Full API integrations</li>
+          <li>Custom heritage taxonomies</li>
+          <li>Dedicated success management</li>
+        </ul>
+        <button class="btn-s" style="width:100%;justify-content:center" onclick="showPage('contact')">Talk to Sales</button>
+      </div>
+    </div>
+    <p style="text-align:center;margin-top:32px;font-size:13px;color:var(--text-muted)">Onboarding fee: 25% of first-year subscription · Premium intelligence add-ons available from Year 2</p>
+  </div>
+</section>
+</div><!-- /pricing -->
+
+<!-- ═══════════════ FAQ ═══════════════ -->
+<div class="page" id="page-faq">
+<section class="sec-light" style="padding-top:clamp(60px,8vw,96px)">
+  <div class="container">
+    <div class="label-tag">FAQ</div>
+    <h2 class="section-h2 h2-dark">Frequently Asked Questions</h2>
+    <div class="divider div-teal"></div>
+    <div class="faq-wrap">
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFAQ(this.parentElement)"><h4>What problem does Heritage Signal OS actually solve?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-body">Museums and heritage venues receive feedback across emails, surveys, reviews, social media and front-of-house logs, but rarely convert it into structured operational intelligence. Heritage Signal OS fuses these channels and identifies root causes, accessibility risks and recommended interventions  not just complaint counts.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this.parentElement)"><h4>Do we need to replace our existing CRM or ticketing system?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-body">No. Heritage Signal OS sits above your existing stack  CRM, helpdesk, survey and review platforms  ingesting and enriching that data with heritage-specific reasoning rather than replacing it.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this.parentElement)"><h4>How is this different from a survey tool or BI dashboard?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-body">Survey tools and BI dashboards show what visitors are saying. Heritage Signal OS explains why an issue is happening, where in the visitor journey it occurs, what action should be taken, and whether that action actually worked  a closed reasoning loop, not a static report.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this.parentElement)"><h4>How does the platform detect accessibility risks?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-body">The Hidden Accessibility Risk Detector recognises indicators of physical, sensory, cognitive, communication and digital barriers in ordinary complaint language  even when visitors never explicitly mention disability or access issues.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this.parentElement)"><h4>Is the platform UK GDPR compliant?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-body">Yes. The platform is built around UK GDPR requirements, with encrypted data storage, secure cloud infrastructure, role-based access controls, audit logging and anonymisation processes for benchmarking activity.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this.parentElement)"><h4>What results does the plan target?</h4><span class="faq-icon">+</span></div>
+        <div class="faq-body">The plan targets a 15–25% average complaint reduction by Year 2, rising to 20–30% repeat-complaint reduction by Year 3, alongside ≥90% customer retention as the venue base scales toward ≈51 paying organisations.</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /faq -->
+
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<div class="page" id="page-contact">
+<section class="contact-hero">
+  <div class="container">
+    <div class="label-tag-w">Get In Touch</div>
+    <h2 class="section-h2 h2-white">Request a Demo of Heritage Signal OS</h2>
+    <div class="divider div-white"></div>
+    <div class="contact-wrap">
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-group"><label>Full Name</label><input type="text" required placeholder="Your name"></div>
+        <div class="form-group"><label>Work Email</label><input type="email" required placeholder="you@museum.org.uk"></div>
+        <div class="form-group"><label>Venue / Organisation Type</label>
+          <select>
+            <option>National Museum / Museum Group</option>
+            <option>Regional Museum</option>
+            <option>Historic House / Estate</option>
+            <option>Heritage Trust / Conservation Body</option>
+            <option>Visitor Attraction / Gallery</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea placeholder="Tell us about your venue and what you'd like to see in a demo"></textarea></div>
+        <button class="btn-p" type="submit" style="width:100%;justify-content:center">Send Demo Request <i class="fas fa-arrow-right" style="margin-left:6px"></i></button>
+      </form>
+      <div class="contact-info">
+        <h3>Let's Turn Complaints Into Improvement</h3>
+        <p class="sub">Whether you run a single historic house or a national museum group, our team will walk you through how Heritage Signal OS fits your venue's complaint and accessibility workflows.</p>
+        <div class="c-detail"><div class="ic"><i class="fas fa-envelope"></i></div><div><strong>Email</strong><span>theheritagesignalosuk@outlook.com</span></div></div>
+        <div class="c-detail"><div class="ic"><i class="fas fa-location-dot"></i></div><div><strong>Location</strong><span>United Kingdom</span></div></div>
+        <div class="c-detail"><div class="ic"><i class="fas fa-user"></i></div><div><strong>Founder</strong><span>Priya Monga</span></div></div>
+        <div class="c-detail"><div class="ic"><i class="fas fa-shield-halved"></i></div><div><strong>Compliance</strong><span>UK GDPR · Equality Act Aligned</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- /contact -->
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <a class="nav-logo" onclick="showPage('home')">
+          <div class="nav-logo-icon"><i class="fas fa-landmark"></i></div>
+          <div class="nav-logo-text">Heritage Signal OS</div>
+        </a>
+        <p>The complaint intelligence operating system helping UK museums, galleries and heritage venues turn visitor complaints into root-cause diagnosis, accessibility insight and measurable operational improvement.</p>
+      </div>
+      <div>
+        <div class="f-col-title">Platform</div>
+        <div class="f-col">
+          <a onclick="showPage('platform')">Heritage Operations Signal Graph</a>
+          <a onclick="showPage('platform')">Journey-Cause Reasoning Engine</a>
+          <a onclick="showPage('platform')">Hidden Accessibility Risk Detector</a>
+          <a onclick="showPage('platform')">Friction DNA Profiler</a>
+          <a onclick="showPage('platform')">Intervention Memory Loop</a>
+          <a onclick="showPage('platform')">Anonymised Benchmark Layer</a>
+        </div>
+      </div>
+      <div>
+        <div class="f-col-title">Company</div>
+        <div class="f-col">
+          <a onclick="showPage('about')">About Heritage Signal OS</a>
+          <a onclick="showPage('about')">Priya Monga · Founder</a>
+          <a onclick="showPage('process')">How It Works</a>
+          <a onclick="showPage('faq')">FAQ</a>
+          <a onclick="showPage('market')">Market Analysis</a>
+          <a onclick="showPage('contact')">Request a Demo</a>
+        </div>
+      </div>
+      <div>
+        <div class="f-col-title">Solutions</div>
+        <div class="f-col">
+          <a onclick="showPage('platform')">National &amp; Regional Museums</a>
+          <a onclick="showPage('platform')">Historic Houses &amp; Estates</a>
+          <a onclick="showPage('platform')">Heritage Trusts</a>
+          <a onclick="showPage('platform')">Visitor Attractions &amp; Galleries</a>
+          <a onclick="showPage('pricing')">Starter · £250/mo</a>
+          <a onclick="showPage('pricing')">Professional · £750/mo</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bar">
+      <p>© 2026 <span>Heritage Signal OS</span> · United Kingdom · UK GDPR Compliant · theheritagesignalos.com · Founded by Priya Monga</p>
+      <div class="footer-links">
+        <a onclick="showPage('contact')">Privacy Policy</a>
+        <a onclick="showPage('contact')">Terms of Service</a>
+        <a onclick="showPage('contact')">Accessibility Statement</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function showPage(n){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-links button').forEach(b=>b.classList.remove('active'));
+  const pg=document.getElementById('page-'+n);
+  if(pg)pg.classList.add('active');
+  const bt=document.getElementById('nav-'+n);
+  if(bt)bt.classList.add('active');
+  window.scrollTo({top:0,behavior:'instant'});
+  if(n==='market'&&!window._charts){initCharts();window._charts=true;}
+}
+function toggleCard(btn){
+  const c=btn.closest('.plat-card');
+  c.classList.toggle('open');
+  btn.innerHTML=c.classList.contains('open')?'Show Less':'Learn More';
+}
+function toggleFAQ(el){el.classList.toggle('open');}
+function closeMob(){
+  document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('open');
+}
+document.getElementById('hamburger').addEventListener('click',function(){
+  this.classList.toggle('open');
+  document.getElementById('mobileNav').classList.toggle('open');
+});
+function handleSubmit(e){
+  e.preventDefault();
+  const b=e.target.querySelector('button[type=submit]');
+  b.innerHTML='<i class="fas fa-check"></i> Demo Request Sent!';
+  b.style.background='linear-gradient(135deg,#3F7D58,#1F7A4D)';
+  b.disabled=true;
+  setTimeout(()=>{b.innerHTML='Send Demo Request <i class="fas fa-arrow-right" style="margin-left:6px"></i>';b.style.background='';b.disabled=false;e.target.reset();},3500);
+}
+const T='rgba(212,175,55,.85)',T2='rgba(212,175,55,.4)',A='rgba(140,35,49,.85)',A2='rgba(140,35,49,.45)',G='rgba(63,125,88,.8)',GR='rgba(14,42,71,.06)',MT='rgba(60,79,99,.85)';
+Chart.defaults.font.family='IBM Plex Mono, monospace';Chart.defaults.font.size=11;Chart.defaults.color=MT;
+function initCharts(){
+  new Chart(document.getElementById('chartGrowth'),{type:'bar',data:{labels:['Year 1','Year 2','Year 3'],datasets:[{label:'Revenue (£)',data:[45897,400240,740509],backgroundColor:T,borderRadius:6,barPercentage:.55},{type:'line',label:'Paying Venues',data:[10,42,51],borderColor:A,borderWidth:2,yAxisID:'y2',tension:.4,pointBackgroundColor:A,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8,font:{size:window.innerWidth<480?8:10}}}},scales:{x:{grid:{display:false},ticks:{font:{size:window.innerWidth<480?8:10}}},y:{grid:{color:GR},ticks:{callback:v=>'£'+(v/1000)+'k',font:{size:window.innerWidth<480?8:10}}},y2:{position:'right',grid:{display:false},ticks:{font:{size:window.innerWidth<480?8:10}}}}}});
+  new Chart(document.getElementById('chartSector'),{type:'bar',data:{labels:['Starter','Professional','Group','Enterprise','Premium Add-Ons','Onboarding Fees'],datasets:[{label:'Year 3 Revenue (£)',data:[49375,194414,226339,138867,91349,40164],backgroundColor:[T,A,G,T2,A2,'rgba(14,42,71,.5)'],borderRadius:6,barPercentage:.6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{maxRotation:45,minRotation:0,autoSkip:false,font:{size:window.innerWidth<480?7:9}}},y:{grid:{color:GR},ticks:{callback:v=>'£'+(v/1000)+'k'}}}}});
+  new Chart(document.getElementById('chartRootCause'),{type:'doughnut',data:{labels:['Email','Surveys','Online Reviews','Social Media','Ticket Desk','Accessibility Reports'],datasets:[{data:[20,18,16,15,16,15],backgroundColor:[T,A,G,T2,A2,'rgba(14,42,71,.5)'],borderWidth:1.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:8,font:{size:9}}}}}});
+  new Chart(document.getElementById('chartRadar'),{type:'radar',data:{labels:['Root-Cause Analysis','Accessibility Detection','Intervention Tracking','Cross-Channel Fusion','Benchmarking','Heritage Ontology'],datasets:[{label:'Heritage Signal OS',data:[5,5,5,5,5,5],backgroundColor:'rgba(212,175,55,.12)',borderColor:T,borderWidth:2,pointBackgroundColor:T},{label:'CRM / Helpdesk',data:[1,0,1,1,0,0],backgroundColor:'rgba(140,35,49,.05)',borderColor:A2,borderWidth:1.5,pointBackgroundColor:A2},{label:'Survey Tools',data:[0,0,0,1,0,0],backgroundColor:'rgba(14,42,71,.04)',borderColor:'rgba(14,42,71,.4)',borderWidth:1.5,pointBackgroundColor:'rgba(14,42,71,.4)'},{label:'BI / Analytics',data:[1,0,0,2,1,0],backgroundColor:'rgba(63,125,88,.05)',borderColor:'rgba(63,125,88,.5)',borderWidth:1.5,pointBackgroundColor:'rgba(63,125,88,.5)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10,padding:10,font:{size:9}}}},scales:{r:{grid:{color:GR},pointLabels:{font:{size:9}},ticks:{display:false},min:0,max:5}}}});
+}
+</script>
+</body>
+</html>
